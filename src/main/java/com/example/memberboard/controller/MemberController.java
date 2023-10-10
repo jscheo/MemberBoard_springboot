@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -67,5 +68,10 @@ public class MemberController {
     public String logout(HttpSession session){
         session.removeAttribute("loginEmail");
         return "index";
+    }
+    @GetMapping("/admin")
+    public String admin(Model model){
+        memberService.findAll();
+        return "memberPages/memberList";
     }
 }

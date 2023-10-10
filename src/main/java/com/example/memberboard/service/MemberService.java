@@ -60,4 +60,9 @@ public class MemberService {
             return false;
         }
     }
+
+    public void findAll() {
+        List<MemberEntity> memberEntityList = memberRepository.findAll();
+
+    }
 }

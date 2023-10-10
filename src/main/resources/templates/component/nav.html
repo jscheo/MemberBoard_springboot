@@ -26,6 +26,9 @@
                     <li th:unless="${session.loginEmail==null}" class="nav-item">
                         <a class="nav-link" href="/member/logout">로그아웃</a>
                     </li>
+                    <li th:if="${session.loginEmail == 'admin'}" class="nav-item">
+                        <a class="nav-link" href="/member/admin">관리자메뉴</a>
+                    </li>
                 </ul>
 <!--                <script>-->
 <!--                    const loginArea = document.getElementById("login-area");-->
