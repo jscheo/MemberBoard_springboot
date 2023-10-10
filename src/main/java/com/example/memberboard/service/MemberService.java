@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +42,22 @@ public class MemberService {
         }
 
     }
-    @Transactional
-    public List<MemberEntity> findByEmail(String memberEmail) {
-        List<MemberEntity> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
-        return byMemberEmail;
+    public boolean findByEmail(String memberEmail) {
+        Optional<MemberEntity> byMemberEmail = memberRepository.findByMemberEmail(memberEmail);
+        if(byMemberEmail.isEmpty()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean login(MemberDTO memberDTO) {
+        Optional<MemberEntity> optionalMemberEntity=
+                memberRepository.findByMemberEmailAndMemberPassword(memberDTO.getMemberEmail(), memberDTO.getMemberPassword());
+        if(optionalMemberEntity.isPresent()){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
