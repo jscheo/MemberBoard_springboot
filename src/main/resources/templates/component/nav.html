@@ -18,12 +18,28 @@
                         <a class="nav-link" href="/member/save">회원가입</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/member/login">로그인</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="/board">글목록</a>
                     </li>
+                    <li th:if="${session.loginEmail==null}" class="nav-item" >
+                        <a class="nav-link" href="/member/login">로그인</a>
+                    </li>
+                    <li th:unless="${session.loginEmail==null}" class="nav-item">
+                        <a class="nav-link" href="/member/logout">로그아웃</a>
+                    </li>
                 </ul>
+<!--                <script>-->
+<!--                    const loginArea = document.getElementById("login-area");-->
+<!--                    const loginEmail = [[${session.loginEmail}]];-->
+<!--                    console.log(loginEmail);-->
+<!--                    if (loginEmail != null) {-->
+<!--                        // 로그인 했음-->
+<!--                        loginArea.innerHTML = "<a href='/mypage'>" + loginEmail + "님 환영해요!</a>" +-->
+<!--                            "<a href='/logout'>logout</a>";-->
+<!--                    } else {-->
+<!--                        // 로그인 안했음-->
+<!--                        loginArea.innerHTML = "<a href='/member/login'>로그인</a>";-->
+<!--                    }-->
+<!--                </script>-->
                 <form action="/board" method="get" class="d-flex" role="search">
                     <select name="type" class="form-select me-2 w-50">
                         <option value="boardWriter">작성자</option>

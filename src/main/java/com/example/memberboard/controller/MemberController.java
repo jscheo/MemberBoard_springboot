@@ -48,6 +48,7 @@ public class MemberController {
     public String login(@ModelAttribute MemberDTO memberDTO, HttpSession session){
         boolean loginResult = memberService.login(memberDTO);
         if(loginResult){
+            session.setAttribute("loginEmail", memberDTO.getMemberEmail());
             return "/boardPages/boardList";
         }else{
             return "/boardPages/boardNotFound";
@@ -61,5 +62,10 @@ public class MemberController {
         }else{
             return new ResponseEntity("사용불가", HttpStatus.CONFLICT);
         }
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        session.removeAttribute("loginEmail");
+        return "index";
     }
 }
