@@ -1,26 +1,44 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <th:block th:replace="~{component/config :: config}"></th:block>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
 <div th:replace="~{component/header :: header}"></div>
 <div th:replace="~{component/nav :: nav}"></div>
 
 <div class="container mt-5 mb-5">
-  <form action="/member/save" method="post" enctype="multipart/form-data">
-    <input type="text" name="memberEmail" placeholder="이메일"><br>
-    <input type="text" name="memberPassword" placeholder="비밀번호"><br>
-    <input type="text" name="memberName" placeholder="이름"><br>
-    <input type="text" name="memberMobile" placeholder="전화번호"><br>
-    <input type="text" name="memberBirth" placeholder="생년월일"><br>
-    <input type="file" name="memberProfile" multiple><br>
-    <input type="submit" value="등록">
-  </form>
+    <form action="/member/save" method="post" enctype="multipart/form-data">
+        <input type="text" name="memberEmail" id="email_check" placeholder="이메일" onkeyup="dup_check()"><br>
+        <p id="result"></p>
+        <input type="text" name="memberPassword" placeholder="비밀번호"><br>
+        <input type="text" name="memberName" placeholder="이름"><br>
+        <input type="text" name="memberMobile" placeholder="전화번호"><br>
+        <input type="text" name="memberBirth" placeholder="생년월일"><br>
+        <input type="file" name="memberProfile" multiple><br>
+        <input type="submit" value="등록">
+    </form>
 
 </div>
 
 <div th:replace="~{component/footer :: footer}"></div>
 
 </body>
+<script>
+    const dup_check = () => {
+        const inputEmail = document.querySelector("#email_check").value;
+        const result = document.querySelector("#result");
+        axios({
+            method: "post",
+            url: "/member/dup",
+            data: {
+                memberEmail: inputEmail
+            },
+        }).then(res => {
+            result.innerHTML = "사용 가능합니다.";
+        }).catch(err => {
+            result.innerHTML = "사용 불가합니다..";
+        });
+    }
+</script>
 </html>
