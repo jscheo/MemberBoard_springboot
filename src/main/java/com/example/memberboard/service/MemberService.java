@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,8 +62,17 @@ public class MemberService {
         }
     }
 
-    public void findAll() {
+    public List<MemberDTO> findAll() {
         List<MemberEntity> memberEntityList = memberRepository.findAll();
+        List<MemberDTO> memberDTOS = new ArrayList<>();
+        for(MemberEntity memberEntity : memberEntityList){
+            MemberDTO memberDTO = MemberDTO.toSaveDTO(memberEntity);
+            memberDTOS.add(memberDTO);
+        }
+        return memberDTOS;
+    }
 
+    public void delete(Long id) {
+        memberRepository.deleteById(id);
     }
 }

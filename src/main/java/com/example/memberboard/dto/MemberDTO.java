@@ -1,5 +1,6 @@
 package com.example.memberboard.dto;
 
+import com.example.memberboard.entity.MemberEntity;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,4 +18,15 @@ public class MemberDTO {
     private List<MultipartFile> memberProfile;
     private int fileAttached;
 
+    public static MemberDTO toSaveDTO(MemberEntity memberEntity) {
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setId(memberEntity.getId());
+        memberDTO.setMemberEmail(memberEntity.getMemberEmail());
+        memberDTO.setMemberPassword(memberEntity.getMemberPassword());
+        memberDTO.setMemberName(memberEntity.getMemberName());
+        memberDTO.setMemberMobile(memberEntity.getMemberMobile());
+        memberDTO.setMemberBirth(memberEntity.getMemberBirth());
+        memberDTO.setFileAttached(memberEntity.getFileAttached());
+        return memberDTO;
+    }
 }

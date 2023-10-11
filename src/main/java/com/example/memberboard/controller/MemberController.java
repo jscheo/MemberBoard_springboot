@@ -52,7 +52,7 @@ public class MemberController {
             session.setAttribute("loginEmail", memberDTO.getMemberEmail());
             return "/boardPages/boardList";
         }else{
-            return "/boardPages/boardNotFound";
+            return "redirect:/member/login";
         }
     }
     @PutMapping("/loginCheck")
@@ -71,7 +71,14 @@ public class MemberController {
     }
     @GetMapping("/admin")
     public String admin(Model model){
-        memberService.findAll();
+        List<MemberDTO> memberDTOList = memberService.findAll();
+        System.out.println("memberDTOList = " + memberDTOList);
+        model.addAttribute("memberList", memberDTOList);
         return "memberPages/memberList";
+    }
+    @GetMapping("/{id}")
+    public String delete(@PathVariable("id") Long id){
+        memberService.delete(id);
+        return "index";
     }
 }
