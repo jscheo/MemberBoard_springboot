@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -21,8 +23,8 @@ public class BoardController {
     public String save(){
         return "boardPages/boardSave";
     }
-    @PostMapping
-    public String save(@ModelAttribute BoardDTO boardDTO){
+    @PostMapping("/save")
+    public String save(@ModelAttribute BoardDTO boardDTO) throws IOException {
         boardService.save(boardDTO);
         return "index";
     }
