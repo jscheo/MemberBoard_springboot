@@ -46,4 +46,25 @@ public class BoardController {
         model.addAttribute("q", q);
         return "/boardPages/boardList";
     }
+    @GetMapping("{id}")
+    public String findById(@PathVariable("id")Long id, Model model,
+                           @RequestParam(value = "page", required = false, defaultValue = "1")int page,
+                           @RequestParam(value = "type", required = false, defaultValue = "boardTitle")String type,
+                           @RequestParam(value = "q", required = false, defaultValue = "")String q){
+        boardService.increaseHits(id);
+
+        System.out.println("id = " + id);
+
+        model.addAttribute("page", page);
+        model.addAttribute("type", type);
+        model.addAttribute("q", q);
+        try{
+            BoardDTO byId = boardService.findById(id);
+            System.out.println("byId = " + byId);
+            model.addAttribute("board", byId);
+            return "boardPages/boardDetail";
+        }catch (Exception e){
+            return "boardPages/boardNotFound";
+        }
+    }
 }

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="container mt-5 mb-5">
+    <!-- 화면에 보여질 내용이 들어갈 부분 -->
+    <table class="table table-hover">
+        <tr>
+            <th>id</th>
+            <td th:text="${board.id}"></td>
+        </tr>
+        <tr>
+            <th>title</th>
+            <td th:text="${board.boardTitle}"></td>
+        </tr>
+        <tr>
+            <th>writer</th>
+            <td th:text="${board.boardWriter}"></td>
+        </tr>
+        <tr>
+            <th>date</th>
+            <td th:text="${board.createdAt}"></td>
+        </tr>
+        <tr>
+            <th>hits</th>
+            <td th:text="${board.boardHits}"></td>
+        </tr>
+        <tr>
+            <th>contents</th>
+            <td th:text="${board.boardContents}"></td>
+        </tr>
+        <tr th:if="${board.fileAttached == 1}">
+            <th>image</th>
+            <td th:each="fileName: ${board.storedFileName}">
+                <img th:src="@{|/upload/${fileName}}" width="200" height="200" alt="">
+            </td>
+        </tr>
+        <tr>
+            <td th:if="${session.loginEmail} == ${board.boardWriter}">
+                <a th:href="@{|/board/update/${board.id}}"> 수정</a>
+                <a th:href="@{|/board/delete/${board.id}}"> 삭제</a>
+            </td>
+            <td th:if="${session.loginEmail} == 'admin'">
+                <a th:href="@{|/board/delete/${board.id}}"> 삭제</a>
+            </td>
+        </tr>
+    </table>
+    <div id="btn-area">
+        <button class="btn btn-primary" onclick="list_fn()">목록</button>
+        <!-- 수정 또는 삭제 버튼을 클릭하면 비밀번호를 입력하는 input 창이 노출되고
+            비밀번호 일치하면 수정페이지로 이동 또는 삭제처리를 진행함. -->
+    </div>
+
+</div>
+
+<div th:replace="~{component/footer :: footer}"></div>
+
+</body>
+<script th:inline="javascript">
+
+    const list_fn = () => {
+        const page = [[${page}]]
+        const type = [[${type}]]
+        const q = [[${q}]]
+        location.href = `/board/list?page=${page}&type=${type}&q=${q}`;
+    }
+</script>
+</html>

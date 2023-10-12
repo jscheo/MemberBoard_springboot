@@ -3,8 +3,10 @@ package com.example.memberboard.service;
 import com.example.memberboard.dto.BoardDTO;
 import com.example.memberboard.entity.BoardEntity;
 import com.example.memberboard.entity.BoardFileEntity;
+import com.example.memberboard.entity.MemberEntity;
 import com.example.memberboard.repository.BoardFileRepository;
 import com.example.memberboard.repository.BoardRepository;
+import com.example.memberboard.repository.MemberRepository;
 import com.example.memberboard.util.UtilClass;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,21 +17,27 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
+    private final MemberRepository memberRepository;
 
     public Long save(BoardDTO boardDTO) throws IOException {
         if(boardDTO.getBoardFile().get(0).isEmpty()){
-            BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
+            MemberEntity memberEntity = memberRepository.findById(boardDTO.getMemberId()).orElseThrow(() -> new NoSuchElementException());
+            BoardEntity boardEntity = BoardEntity.toSaveEntity(memberEntity, boardDTO);
             return boardRepository.save(boardEntity).getId();
         }else{
-            BoardEntity boardEntity = BoardEntity.toSaveFileEntity(boardDTO);
+            MemberEntity memberEntity = memberRepository.findById(boardDTO.getMemberId()).orElseThrow(() -> new NoSuchElementException());
+            BoardEntity boardEntity = BoardEntity.toSaveFileEntity(memberEntity, boardDTO);
             BoardEntity saveEntity = boardRepository.save(boardEntity);
             for(MultipartFile memberFile : boardDTO.getBoardFile()){
                 String originalFilename = memberFile.getOriginalFilename();
@@ -70,4 +78,15 @@ public class BoardService {
                         .build());
         return boardList;
      }
+    @Transactional
+    public void increaseHits(Long id) {
+        boardRepository.increaseHits(id);
+    }
+    @Transactional
+    public BoardDTO findById(Long id) {
+        Optional<BoardEntity> byId = boardRepository.findById(id);
+        BoardDTO boardDTO = BoardDTO.toSaveDTO(byId.get());
+        System.out.println("boardDTO = " + boardDTO);
+        return boardDTO;
+    }
 }
