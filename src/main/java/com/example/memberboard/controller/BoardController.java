@@ -67,4 +67,15 @@ public class BoardController {
             return "boardPages/boardNotFound";
         }
     }
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable("id") Long id, Model model){
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("board", boardDTO);
+        return "boardPages/boardUpdate";
+    }
+    @PostMapping("/update")
+    public String update(@ModelAttribute BoardDTO boardDTO){
+        boardService.update(boardDTO);
+        return "redirect:/board/list";
+    }
 }

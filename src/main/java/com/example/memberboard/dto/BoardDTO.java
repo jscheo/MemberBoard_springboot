@@ -23,10 +23,11 @@ public class BoardDTO {
     private String boardTitle;
     private String boardContents;
     private int boardHits;
-    private int fileAttached;
     private String createdAt;
-    private Long memberId;
+
+
     private List<MultipartFile> boardFile;
+    private int fileAttached;
     private List<String> originalFileName = new ArrayList<>();
     private List<String> storedFileName = new ArrayList<>();
 

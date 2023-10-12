@@ -36,10 +36,10 @@ public class BoardEntity extends BaseEntity{
 
     public static BoardEntity toSaveEntity(MemberEntity memberEntity, BoardDTO boardDTO) {
         BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setMemberEntity(memberEntity);
         boardEntity.setBoardWriter(boardDTO.getBoardWriter());
         boardEntity.setBoardTitle(boardDTO.getBoardTitle());
         boardEntity.setBoardContents(boardDTO.getBoardContents());
-        boardEntity.setMemberEntity(memberEntity);
         boardEntity.setFileAttached(0);
         return boardEntity;
     }
@@ -51,6 +51,17 @@ public class BoardEntity extends BaseEntity{
         boardEntity.setBoardContents(boardDTO.getBoardContents());
         boardEntity.setMemberEntity(memberEntity);
         boardEntity.setFileAttached(1);
+        return boardEntity;
+    }
+
+    public static BoardEntity toUpdateEntity(MemberEntity memberEntity, BoardDTO boardDTO) {
+        BoardEntity boardEntity = new BoardEntity();
+        boardEntity.setId(boardDTO.getId());
+        boardEntity.setBoardWriter(boardDTO.getBoardWriter());
+        boardEntity.setBoardTitle(boardDTO.getBoardTitle());
+        boardEntity.setBoardContents(boardDTO.getBoardContents());
+        boardEntity.setMemberEntity(memberEntity);
+        boardEntity.setFileAttached(boardDTO.getFileAttached());
         return boardEntity;
     }
 }

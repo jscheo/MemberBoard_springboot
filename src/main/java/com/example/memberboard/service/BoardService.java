@@ -31,12 +31,11 @@ public class BoardService {
     private final MemberRepository memberRepository;
 
     public Long save(BoardDTO boardDTO) throws IOException {
+        MemberEntity memberEntity = memberRepository.findByMemberEmail(boardDTO.getBoardWriter()).orElseThrow(() -> new NoSuchElementException());
         if(boardDTO.getBoardFile().get(0).isEmpty()){
-            MemberEntity memberEntity = memberRepository.findById(boardDTO.getMemberId()).orElseThrow(() -> new NoSuchElementException());
             BoardEntity boardEntity = BoardEntity.toSaveEntity(memberEntity, boardDTO);
             return boardRepository.save(boardEntity).getId();
         }else{
-            MemberEntity memberEntity = memberRepository.findById(boardDTO.getMemberId()).orElseThrow(() -> new NoSuchElementException());
             BoardEntity boardEntity = BoardEntity.toSaveFileEntity(memberEntity, boardDTO);
             BoardEntity saveEntity = boardRepository.save(boardEntity);
             for(MultipartFile memberFile : boardDTO.getBoardFile()){
@@ -78,15 +77,21 @@ public class BoardService {
                         .build());
         return boardList;
      }
+
     @Transactional
     public void increaseHits(Long id) {
         boardRepository.increaseHits(id);
     }
+
     @Transactional
     public BoardDTO findById(Long id) {
-        Optional<BoardEntity> byId = boardRepository.findById(id);
-        BoardDTO boardDTO = BoardDTO.toSaveDTO(byId.get());
-        System.out.println("boardDTO = " + boardDTO);
-        return boardDTO;
+        BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+        return BoardDTO.toSaveDTO(boardEntity);
+    }
+
+    public void update(BoardDTO boardDTO) {
+        MemberEntity memberEntity = memberRepository.findByMemberEmail(boardDTO.getBoardWriter()).orElseThrow(() -> new NoSuchElementException());
+        BoardEntity boardEntity = BoardEntity.toUpdateEntity(memberEntity, boardDTO);
+        boardRepository.save(boardEntity);
     }
 }
