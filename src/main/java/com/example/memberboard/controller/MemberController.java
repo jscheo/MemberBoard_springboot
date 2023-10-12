@@ -1,7 +1,6 @@
 package com.example.memberboard.controller;
 
 import com.example.memberboard.dto.MemberDTO;
-import com.example.memberboard.entity.MemberEntity;
 import com.example.memberboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -80,5 +79,16 @@ public class MemberController {
     public String delete(@PathVariable("id") Long id){
         memberService.delete(id);
         return "index";
+    }
+    @GetMapping("/myPage")
+    public String myPage(HttpSession session, Model model){
+        MemberDTO memberDTO = memberService.findByDTO((String) session.getAttribute("loginEmail"));
+        model.addAttribute("member", memberDTO);
+        return "memberPages/memberPage";
+    }
+    @PostMapping ("/update")
+    public String update(@ModelAttribute MemberDTO memberDTO){
+        memberService.update(memberDTO);
+        return "redirect:/myPage";
     }
 }
