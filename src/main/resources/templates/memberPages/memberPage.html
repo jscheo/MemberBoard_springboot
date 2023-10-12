@@ -10,6 +10,7 @@
 <div class="container mt-5 mb-5">
   <!-- 화면에 보여질 내용이 들어갈 부분 -->
   <form id="updateForm" action="/member/update" method="post" >
+    <input type="hidden" name="id" th:value="${member.id}">
     <input type="text" name="memberEmail" placeholder="이메일" th:value="${member.memberEmail}" ><br>
     <input type="text" name="memberPassword" placeholder="비밀번호"><br>
     <input type="text" name="memberName" placeholder="이름" th:value="${member.memberName}"><br>

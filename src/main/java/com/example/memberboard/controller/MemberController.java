@@ -49,7 +49,7 @@ public class MemberController {
         boolean loginResult = memberService.login(memberDTO);
         if(loginResult){
             session.setAttribute("loginEmail", memberDTO.getMemberEmail());
-            return "/boardPages/boardList";
+            return "index";
         }else{
             return "redirect:/member/login";
         }
@@ -89,6 +89,6 @@ public class MemberController {
     @PostMapping ("/update")
     public String update(@ModelAttribute MemberDTO memberDTO){
         memberService.update(memberDTO);
-        return "redirect:/myPage";
+        return "redirect:/member/myPage";
     }
 }

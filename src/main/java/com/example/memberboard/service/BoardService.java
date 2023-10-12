@@ -5,7 +5,13 @@ import com.example.memberboard.entity.BoardEntity;
 import com.example.memberboard.entity.BoardFileEntity;
 import com.example.memberboard.repository.BoardFileRepository;
 import com.example.memberboard.repository.BoardRepository;
+import com.example.memberboard.util.UtilClass;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,4 +43,31 @@ public class BoardService {
             return saveEntity.getId();
         }
     }
+
+    public Page<BoardDTO> findAll(int page, String type, String q) {
+        page = page -1;
+        int pageLimit = 5;
+        Page<BoardEntity> boardEntities = null;
+
+        if(q.equals("")){
+            boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        }else {
+            if((type.equals("boardTitle"))){
+                boardEntities = boardRepository.findByBoardTitleContaining(q, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC,"id")));
+            }else if(type.equals("boardWriter")){
+                boardEntities = boardRepository.findByBoardWriterContaining(q, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC,"id")));
+            }
+        }
+
+        Page<BoardDTO> boardList = boardEntities.map(boardEntity ->
+                BoardDTO.builder()
+                        .id(boardEntity.getId())
+                        .boardWriter(boardEntity.getBoardWriter())
+                        .boardTitle(boardEntity.getBoardTitle())
+                        .boardContents(boardEntity.getBoardContents())
+                        .boardHits(boardEntity.getBoardHits())
+                        .createdAt(UtilClass.dateTimeFormat(boardEntity.getCreatedAt()))
+                        .build());
+        return boardList;
+     }
 }
