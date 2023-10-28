@@ -95,41 +95,51 @@
 </body>
 <script th:inline="javascript">
     const comment_list = (commentList) => {
-        const result = document.querySelector("#comment-area");
+        console.log("댓글 목록 함수", commentList);
+        const resultArea = document.querySelector("#comment-list");
         let output = "        <table class=\"table\">\n" +
             "            <tr>\n" +
             "                <th>writer</th>\n" +
             "                <th>contents</th>\n" +
-            "                <th>date</th>\n" +
+            "                <th colspan=\"3\">date</th>\n" +
             "            </tr>";
         for (let i in commentList) {
             output += "<tr>\n" +
                 "                <td>" + commentList[i].commentWriter + "</td>\n" +
                 "                <td>" + commentList[i].commentContents + "</td>\n" +
-                "                <td>" + commentList[i].createdAt + "</td>\n" +
-                "            </tr>";
+                "                <td>" + commentList[i].createdAt + "</td>\n";
+            if (commentList[i].isLike == 0) {
+                output += "<td>" + "<i class=\"bi bi-suit-heart\" onclick=\"like_fn('" + commentList[i].id + "')\"></i>";
+            } else {
+                output += "<td>" + "<i class=\"bi bi-suit-heart-fill\" onclick=\"unlike_fn('" + commentList[i].id + "')\"></i>";
+            }
+            output += "<span class='ms-1'>" + commentList[i].likeCount + "</span>";
+            output += "</td></tr>";
         }
         output += "</table>";
-        result.innerHTML = output;
+        resultArea.innerHTML = output;
     }
+
     const comment_fn = () => {
-        const commentWriter = document.querySelector("#commentWriter").value;
-        const commentContents = document.querySelector("#commentContents").value;
+        const writer = document.querySelector("#comment-writer").value;
+        const contents = document.querySelector("#comment-contents").value;
         const boardId = [[${board.id}]];
         axios({
             method: "post",
             url: "/comment/save",
             data: {
-                commentWriter: commentWriter,
-                commentContents: commentContents,
+                commentWriter: writer,
+                commentContents: contents,
                 boardId: boardId
-            },
+            }
         }).then(res => {
-            document.querySelector("#commentWriter").value = "";
-            document.querySelector("#commentContents").value = "";
+            console.log("res", res);
+            console.log("댓글 목록", res.data);
+            document.querySelector("#comment-writer").value = "";
+            document.querySelector("#comment-contents").value = "";
             comment_list(res.data);
         }).catch(err => {
-            console.log("err" + err);
+            console.log("err", err);
         });
     }
 
