@@ -55,13 +55,120 @@
         <!-- 수정 또는 삭제 버튼을 클릭하면 비밀번호를 입력하는 input 창이 노출되고
             비밀번호 일치하면 수정페이지로 이동 또는 삭제처리를 진행함. -->
     </div>
-
+    <div>
+        <form>
+            <input type="text" id="commentWriter" placeholder="작성자"><br>
+            <input type="text" id="commentContents" placeholder="내용"><br>
+            <input type="button" th:onclick="comment_fn()" value="등록">
+        </form>
+    </div>
+    <div class="container mt-5" id="comment-area">
+        <div th:if="${commentList == null}">
+            <p>작성된 댓글이 없습니다.</p>
+        </div>
+        <div th:unless="${commentList == null}">
+            <table class="table">
+                <tr>
+                    <th>writer</th>
+                    <th>contents</th>
+                    <th>date</th>
+                </tr>
+                <tr th:each="comment: ${commentList}">
+                    <td th:text="${comment.commentWriter}"></td>
+                    <td th:text="${comment.commentContents}"></td>
+                    <td th:text="${comment.createdAt}"></td>
+                    <td>
+                        <i th:if="${comment.isLike == 0}" class="bi bi-suit-heart"
+                           th:onclick="like_fn([[${comment.id}]])"></i>
+                        <i th:unless="${comment.isLike == 0}" class="bi bi-suit-heart-fill"
+                           th:onclick="unlike_fn([[${comment.id}]])"></i>
+                        <span class="ms-1" th:text="${comment.likeCount}"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 <div th:replace="~{component/footer :: footer}"></div>
 
 </body>
 <script th:inline="javascript">
+    const comment_list = (commentList) => {
+        const result = document.querySelector("#comment-area");
+        let output = "        <table class=\"table\">\n" +
+            "            <tr>\n" +
+            "                <th>writer</th>\n" +
+            "                <th>contents</th>\n" +
+            "                <th>date</th>\n" +
+            "            </tr>";
+        for (let i in commentList) {
+            output += "<tr>\n" +
+                "                <td>" + commentList[i].commentWriter + "</td>\n" +
+                "                <td>" + commentList[i].commentContents + "</td>\n" +
+                "                <td>" + commentList[i].createdAt + "</td>\n" +
+                "            </tr>";
+        }
+        output += "</table>";
+        result.innerHTML = output;
+    }
+    const comment_fn = () => {
+        const commentWriter = document.querySelector("#commentWriter").value;
+        const commentContents = document.querySelector("#commentContents").value;
+        const boardId = [[${board.id}]];
+        axios({
+            method: "post",
+            url: "/comment/save",
+            data: {
+                commentWriter: commentWriter,
+                commentContents: commentContents,
+                boardId: boardId
+            },
+        }).then(res => {
+            document.querySelector("#commentWriter").value = "";
+            document.querySelector("#commentContents").value = "";
+            comment_list(res.data);
+        }).catch(err => {
+            console.log("err" + err);
+        });
+    }
+
+    const unlike_fn = (commentId) => {
+        const memberId = [[${session.loginId}]];
+        const boardId = [[${board.id}]];
+        axios({
+            method: "post",
+            url: "/comment/unlike",
+            data: {
+                memberId: memberId,
+                commentId: commentId,
+                boardId: boardId
+            }
+        }).then(res => {
+            comment_list(res.data);
+        }).catch(err => {
+            console.log("unlike 실패");
+        });
+    }
+
+    const like_fn = (commentId) => {
+        const memberId = [[${session.loginId}]];
+        const boardId = [[${board.id}]];
+        axios({
+            method: "post",
+            url: "/comment/like",
+            data: {
+                memberId: memberId,
+                commentId: commentId,
+                boardId: boardId
+            }
+        }).then(res => {
+            console.log("res.data: ", res.data);
+            comment_list(res.data);
+        }).catch(err => {
+            console.log("unlike 실패");
+        });
+    }
 
     const list_fn = () => {
         const page = [[${page}]]
